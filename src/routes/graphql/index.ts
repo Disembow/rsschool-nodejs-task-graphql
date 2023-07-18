@@ -1,6 +1,6 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { createGqlResponseSchema, gqlResponseSchema } from './schemas.js';
-import { graphql } from 'graphql';
+import { GraphQLObjectType, GraphQLSchema, graphql } from 'graphql';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   fastify.route({
@@ -12,8 +12,32 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
         200: gqlResponseSchema,
       },
     },
+
     async handler(req) {
-      return {};
+      const query = new GraphQLObjectType({
+        name: 'query',
+        fields: {},
+      });
+
+      const mutation = new GraphQLObjectType({
+        name: 'mutations',
+        fields: {},
+      });
+
+      const schema = new GraphQLSchema({
+        query,
+        mutation,
+      });
+      const source = req.body.query;
+      const variableValues = req.body.variables;
+
+      const { data, errors } = await graphql({
+        schema,
+        source,
+        variableValues,
+      });
+
+      return { data, errors };
     },
   });
 };
