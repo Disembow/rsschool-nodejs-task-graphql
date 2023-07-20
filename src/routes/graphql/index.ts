@@ -1,8 +1,17 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { createGqlResponseSchema, gqlResponseSchema } from './schemas.js';
-import { GraphQLObjectType, GraphQLSchema, graphql } from 'graphql';
+import {
+  GraphQLNonNull,
+  GraphQLList,
+  GraphQLObjectType,
+  GraphQLSchema,
+  graphql,
+} from 'graphql';
+import { MemberType, MemberTypeIdEnum } from './types/memberType.js';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
+  const { prisma } = fastify;
+
   fastify.route({
     url: '/',
     method: 'POST',
@@ -15,12 +24,33 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 
     async handler(req) {
       const query = new GraphQLObjectType({
-        name: 'query',
-        fields: {},
+        name: 'Query',
+        fields: {
+          memberType: {
+            type: MemberType,
+            args: {
+              id: { type: new GraphQLNonNull(MemberTypeIdEnum) },
+            },
+            resolve: async (_, args: { id: string }) => {
+              return await prisma.memberType.findFirst({
+                where: {
+                  id: args.id,
+                },
+              });
+            },
+          },
+
+          memberTypes: {
+            type: new GraphQLList(MemberType),
+            resolve: async () => {
+              return await prisma.memberType.findMany();
+            },
+          },
+        },
       });
 
       const mutation = new GraphQLObjectType({
-        name: 'mutations',
+        name: 'Mutations',
         fields: {},
       });
 
