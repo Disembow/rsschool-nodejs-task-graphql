@@ -6,6 +6,8 @@ import {
   GraphQLInt,
   GraphQLString,
 } from 'graphql';
+import { ProfileType } from './profiles.js';
+import { IContext, IParent } from './common.js';
 
 export const MemberType = new GraphQLObjectType({
   name: 'MemberType',
@@ -20,12 +22,19 @@ export const MemberType = new GraphQLObjectType({
     postsLimitPerMonth: {
       type: new GraphQLNonNull(GraphQLInt),
     },
-    // TODO: associate with profiles
+    profiles: {
+      type: new GraphQLNonNull(ProfileType),
+      resolve: async ({ id }: IParent, _, { prisma }: IContext) => {
+        return await prisma.profile.findMany({
+          where: { memberTypeId: id },
+        });
+      },
+    },
   }),
 });
 
-export const MemberTypeIdEnum = new GraphQLEnumType({
-  name: 'MemberTypeIdEnum',
+export const MemberTypeId = new GraphQLEnumType({
+  name: 'MemberTypeId',
   description: 'Member could choose from 2 different types',
   values: {
     basic: { value: 'basic', description: 'Basic membership' },

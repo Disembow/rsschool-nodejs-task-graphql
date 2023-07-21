@@ -7,11 +7,12 @@ import {
   GraphQLSchema,
   graphql,
 } from 'graphql';
-import { MemberType, MemberTypeIdEnum } from './types/memberType.js';
-import { PostsType } from './types/posts.js';
+import { MemberType, MemberTypeId } from './types/memberType.js';
+import { PostType } from './types/posts.js';
 import { UserType } from './types/users.js';
 import { UUIDType } from './types/uuid.js';
-import { ProfilesType } from './types/profiles.js';
+import { ProfileType } from './types/profiles.js';
+import { IContext, IParent } from './types/common.js';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
@@ -32,9 +33,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
         fields: {
           // Members
           memberType: {
-            type: MemberType,
+            type: MemberType as GraphQLObjectType<IParent, IContext>,
             args: {
-              id: { type: new GraphQLNonNull(MemberTypeIdEnum) },
+              id: { type: new GraphQLNonNull(MemberTypeId) },
             },
             resolve: async (_, args: { id: string }) => {
               return await prisma.memberType.findFirst({
@@ -52,7 +53,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 
           // Posts
           post: {
-            type: PostsType,
+            type: PostType,
             args: {
               id: { type: new GraphQLNonNull(UUIDType) },
             },
@@ -64,7 +65,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
           },
 
           posts: {
-            type: new GraphQLList(PostsType),
+            type: new GraphQLList(PostType),
             resolve: async () => {
               return await prisma.post.findMany();
             },
@@ -92,7 +93,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 
           // Profiles
           profile: {
-            type: ProfilesType,
+            type: ProfileType as GraphQLObjectType<IParent, IContext>,
             args: {
               id: { type: new GraphQLNonNull(UUIDType) },
             },
@@ -104,7 +105,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
           },
 
           profiles: {
-            type: new GraphQLList(ProfilesType),
+            type: new GraphQLList(ProfileType),
             resolve: async () => {
               return await prisma.profile.findMany();
             },
@@ -128,7 +129,10 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
         schema,
         source,
         variableValues,
+        contextValue: { prisma },
       });
+
+      console.log('>>>>>>>>', data);
 
       return { data, errors };
     },
