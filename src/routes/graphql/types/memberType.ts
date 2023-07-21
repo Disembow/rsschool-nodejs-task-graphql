@@ -9,7 +9,7 @@ import {
 
 export const MemberType = new GraphQLObjectType({
   name: 'MemberType',
-  description: 'Member',
+  description: 'Membership options',
   fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLString),
@@ -17,7 +17,7 @@ export const MemberType = new GraphQLObjectType({
     discount: {
       type: new GraphQLNonNull(GraphQLFloat),
     },
-    postsLimitPerMounth: {
+    postsLimitPerMonth: {
       type: new GraphQLNonNull(GraphQLInt),
     },
     // TODO: associate with profiles

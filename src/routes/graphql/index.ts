@@ -8,6 +8,10 @@ import {
   graphql,
 } from 'graphql';
 import { MemberType, MemberTypeIdEnum } from './types/memberType.js';
+import { PostsType } from './types/posts.js';
+import { UserType } from './types/users.js';
+import { UUIDType } from './types/uuid.js';
+import { ProfilesType } from './types/profiles.js';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
@@ -26,6 +30,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       const query = new GraphQLObjectType({
         name: 'Query',
         fields: {
+          // Members
           memberType: {
             type: MemberType,
             args: {
@@ -33,9 +38,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
             },
             resolve: async (_, args: { id: string }) => {
               return await prisma.memberType.findFirst({
-                where: {
-                  id: args.id,
-                },
+                where: { id: args.id },
               });
             },
           },
@@ -46,17 +49,77 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
               return await prisma.memberType.findMany();
             },
           },
+
+          // Posts
+          post: {
+            type: PostsType,
+            args: {
+              id: { type: new GraphQLNonNull(UUIDType) },
+            },
+            resolve: async (_, args: { id: string }) => {
+              return await prisma.post.findUnique({
+                where: { id: args.id },
+              });
+            },
+          },
+
+          posts: {
+            type: new GraphQLList(PostsType),
+            resolve: async () => {
+              return await prisma.post.findMany();
+            },
+          },
+
+          // Users
+          user: {
+            type: UserType,
+            args: {
+              id: { type: new GraphQLNonNull(UUIDType) },
+            },
+            resolve: async (_, args: { id: string }) => {
+              return await prisma.user.findUnique({
+                where: { id: args.id },
+              });
+            },
+          },
+
+          users: {
+            type: new GraphQLList(UserType),
+            resolve: async () => {
+              return await prisma.user.findMany();
+            },
+          },
+
+          // Profiles
+          profile: {
+            type: ProfilesType,
+            args: {
+              id: { type: new GraphQLNonNull(UUIDType) },
+            },
+            resolve: async (_, args: { id: string }) => {
+              return await prisma.profile.findUnique({
+                where: { id: args.id },
+              });
+            },
+          },
+
+          profiles: {
+            type: new GraphQLList(ProfilesType),
+            resolve: async () => {
+              return await prisma.profile.findMany();
+            },
+          },
         },
       });
 
-      const mutation = new GraphQLObjectType({
-        name: 'Mutations',
-        fields: {},
-      });
+      // const mutation = new GraphQLObjectType({
+      //   name: 'Mutations',
+      //   fields: {},
+      // });
 
       const schema = new GraphQLSchema({
         query,
-        mutation,
+        // mutation,
       });
       const source = req.body.query;
       const variableValues = req.body.variables;
