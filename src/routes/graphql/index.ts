@@ -33,7 +33,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
         fields: {
           // Members
           memberType: {
-            type: MemberType as GraphQLObjectType<IParent, IContext>,
+            type: MemberType,
             args: {
               id: { type: new GraphQLNonNull(MemberTypeId) },
             },
@@ -73,7 +73,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 
           // Users
           user: {
-            type: UserType,
+            type: UserType as GraphQLObjectType<IParent, IContext>,
             args: {
               id: { type: new GraphQLNonNull(UUIDType) },
             },
