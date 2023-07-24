@@ -6,6 +6,8 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
   graphql,
+  validate,
+  parse,
 } from 'graphql';
 import { MemberType, MemberTypeId } from './types/memberType.js';
 import { PostType } from './types/posts.js';
@@ -13,6 +15,7 @@ import { /*CreateUserInputType,*/ UserType } from './types/users.js';
 import { UUIDType } from './types/uuid.js';
 import { ProfileType } from './types/profiles.js';
 import { IContext, IParent } from './types/common.js';
+import depthLimit from 'graphql-depth-limit';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
@@ -134,6 +137,11 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       });
       const source = req.body.query;
       const variableValues = req.body.variables;
+      const depthValidation = validate(schema, parse(req.body.query), [depthLimit(5)]);
+
+      if (depthValidation && depthValidation.length !== 0) {
+        return { data: '', errors: depthValidation };
+      }
 
       const { data, errors } = await graphql({
         schema,
