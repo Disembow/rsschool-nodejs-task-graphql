@@ -10,6 +10,7 @@ export const PostType = new GraphQLObjectType({
     title: { type: new GraphQLNonNull(GraphQLString) },
     content: { type: new GraphQLNonNull(GraphQLString) },
     authorId: { type: new GraphQLNonNull(GraphQLString) },
+
     author: {
       type: new GraphQLNonNull(UserType),
       resolve: async ({ authorId }: IParent, _, { prisma }: IContext) => {

@@ -53,7 +53,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 
           // Posts
           post: {
-            type: PostType,
+            type: PostType as GraphQLObjectType<IParent, IContext>,
             args: {
               id: { type: new GraphQLNonNull(UUIDType) },
             },
@@ -131,8 +131,6 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
         variableValues,
         contextValue: { prisma },
       });
-
-      console.log('>>>>>>>>', data);
 
       return { data, errors };
     },

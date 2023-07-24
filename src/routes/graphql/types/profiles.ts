@@ -10,6 +10,7 @@ export const ProfileType = new GraphQLObjectType({
     id: { type: new GraphQLNonNull(UUIDType) },
     isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
     yearOfBirth: { type: new GraphQLNonNull(GraphQLInt) },
+
     userId: { type: new GraphQLNonNull(UUIDType) },
     user: {
       type: new GraphQLNonNull(UserType),
@@ -19,6 +20,7 @@ export const ProfileType = new GraphQLObjectType({
         });
       },
     },
+
     memberTypeId: { type: new GraphQLNonNull(MemberTypeId) },
     memberType: {
       type: new GraphQLNonNull(MemberType),

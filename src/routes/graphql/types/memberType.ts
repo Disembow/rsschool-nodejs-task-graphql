@@ -22,6 +22,7 @@ export const MemberType = new GraphQLObjectType({
     postsLimitPerMonth: {
       type: new GraphQLNonNull(GraphQLInt),
     },
+
     profiles: {
       type: new GraphQLNonNull(ProfileType),
       resolve: async ({ id }: IParent, _, { prisma }: IContext) => {
