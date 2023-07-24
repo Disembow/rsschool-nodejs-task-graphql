@@ -4,6 +4,7 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLString,
+  GraphQLInputObjectType,
 } from 'graphql';
 import { UUIDType } from './uuid.js';
 import { ProfileType } from './profiles.js';
@@ -57,4 +58,12 @@ export const UserType = new GraphQLObjectType({
       },
     },
   }),
+});
+
+export const CreateUserInputType = new GraphQLInputObjectType({
+  name: 'CreateUser',
+  fields: {
+    name: { type: GraphQLString },
+    balance: { type: GraphQLString },
+  },
 });

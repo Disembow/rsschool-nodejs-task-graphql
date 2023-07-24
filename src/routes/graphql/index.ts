@@ -9,7 +9,7 @@ import {
 } from 'graphql';
 import { MemberType, MemberTypeId } from './types/memberType.js';
 import { PostType } from './types/posts.js';
-import { UserType } from './types/users.js';
+import { /*CreateUserInputType,*/ UserType } from './types/users.js';
 import { UUIDType } from './types/uuid.js';
 import { ProfileType } from './types/profiles.js';
 import { IContext, IParent } from './types/common.js';
@@ -115,7 +115,17 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 
       // const mutation = new GraphQLObjectType({
       //   name: 'Mutations',
-      //   fields: {},
+      //   fields: {
+      //     createUser: {
+      //       type: UserType as GraphQLObjectType<IParent, IContext>,
+      //       args: {
+      //         dto: { type: new GraphQLNonNull(CreateUserInputType) },
+      //       },
+      //       resolve: async (_, { dto }) => {
+      //         return await prisma.user.create({ data: dto });
+      //       },
+      //     },
+      //   },
       // });
 
       const schema = new GraphQLSchema({
